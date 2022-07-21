@@ -28,8 +28,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const data = __importStar(require("./data.json"));
+var cors = require('cors');
 const app = (0, express_1.default)();
+app.use(cors());
 const port = 2400;
+app.options('/pokemon/:name', cors());
 app.get("/pokemon/:name", (req, res) => {
     let pokemonName = req.params.name.toLowerCase();
     if (pokemonName) {
@@ -41,6 +44,7 @@ app.get("/pokemon/:name", (req, res) => {
     }
     res.status(404).send("The Pokemon not found");
 });
+app.options('/type/:type', cors());
 app.get("/type/:type", (req, res) => {
     let pokemonType = req.params.type.toLowerCase();
     if (pokemonType) {
@@ -62,6 +66,10 @@ app.get("/type/:type", (req, res) => {
         res.status(200).send(JSON.stringify(tempArray));
     }
     res.status(404).send("The type not found");
+});
+app.options('/pokemons', cors());
+app.get("/pokemons", (req, res) => {
+    res.status(200).send(JSON.stringify(data.pokemons));
 });
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
