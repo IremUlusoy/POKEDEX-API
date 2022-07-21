@@ -28,11 +28,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const data = __importStar(require("./data.json"));
-var cors = require('cors');
+var cors = require("cors");
 const app = (0, express_1.default)();
 app.use(cors());
 const port = 2400;
-app.options('/pokemon/:name', cors());
+app.options("/pokemon/:name", cors());
 app.get("/pokemon/:name", (req, res) => {
     let pokemonName = req.params.name.toLowerCase();
     if (pokemonName) {
@@ -44,7 +44,7 @@ app.get("/pokemon/:name", (req, res) => {
     }
     res.status(404).send("The Pokemon not found");
 });
-app.options('/type/:type', cors());
+app.options("/type/:type", cors());
 app.get("/type/:type", (req, res) => {
     let pokemonType = req.params.type.toLowerCase();
     if (pokemonType) {
@@ -67,10 +67,40 @@ app.get("/type/:type", (req, res) => {
     }
     res.status(404).send("The type not found");
 });
-app.options('/pokemons', cors());
+app.options("/pokemons", cors());
 app.get("/pokemons", (req, res) => {
-    res.status(200).send(JSON.stringify(data.pokemons));
+    let pokemonOffset = req.query.offset;
+    let pokemonLimit = req.query.limit;
+    if (pokemonLimit && pokemonOffset) {
+        res
+            .status(200)
+            .send(data.pokemons.slice(parseInt(pokemonOffset, 10), parseInt(pokemonLimit, 10)));
+    }
+    else {
+        res.status(200).send(JSON.stringify(data.pokemons));
+    }
+    // const tempArray: [] = []
+    // data.pokemons.forEach(function (pokemon) {
+    //   pokemon["Type I"].forEach(function (type) {
+    //     if (pokemonType == type.toLowerCase()) {
+    //       tempArray.push(pokemon)
+    //     }
+    //   })
 });
+// app.get("/pokemons", (req: Request, res: Response) => {
+//   res.status(200).send(JSON.stringify(data.pokemons))
+// app.get("/pokemons?limit&&offset")
+// let pokemonLimit = (req.query.limit)
+// let pokemonOffset = (req.query.offset)
+//   // const tempArray: [] = []
+//   // data.pokemons.forEach(function (pokemon) {
+//   //   pokemon["Type I"].forEach(function (type) {
+//   //     if (pokemonType == type.toLowerCase()) {
+//   //       tempArray.push(pokemon)
+//   //     }
+//   //   })
+//     console.log(data.pokemons.slice(2, 4));
+// })
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
